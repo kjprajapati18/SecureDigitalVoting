@@ -1,6 +1,8 @@
 ###imports
 import socket
 from Crypto.PublicKey import RSA
+from collections import Counter
+
 
 ###Function and headers
 def generate_key(modulus_length,exponent):
@@ -9,6 +11,14 @@ def generate_key(modulus_length,exponent):
     private_key = key.exportKey()
     public_key = pub_key.exportKey()
     return private_key, public_key
+def vote_counter(voting_file) #counting votes it uses a .txt file that contains votes
+    file = open(voting_file).readlines()
+    vote_count = dict(Counter(file))
+    for choice in vote_count:
+        choice_ = choice.rstrip()
+        print(choice_, ': ', vote_count[choice]) #prints voting choices and the number of votes they received 
+
+
 
 
 ### Main Server
