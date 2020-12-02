@@ -1,7 +1,12 @@
 ###imports
 
 ###Function and headers
-
+def generate_keys(modulus_length,exponent):
+    key = RSA.generate(modulus_length,e=exponent)
+    pub_key = key.publickey()
+    private_key = key.exportKey()
+    public_key = pub_key.exportKey()
+    return private_key, public_key
 
 
 ### Main Server
