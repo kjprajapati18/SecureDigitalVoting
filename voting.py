@@ -1,6 +1,6 @@
 ###imports
 import socket
-
+from Crypto.PublicKey import RSA
 
 ###Function and headers
 def generate_key(modulus_length,exponent):
