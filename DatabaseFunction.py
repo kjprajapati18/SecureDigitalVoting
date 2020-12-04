@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Dec  2 22:36:32 2020
 
-@author: Westbrook#44.feng
-"""
+
 #Create/Write Users & Votes to Database
 Users={}
 #read users' information first
