@@ -78,4 +78,5 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) ###Pass in "s" to any func
 s.connect((HOST, PORT))
 testWriteC(s)
 testReadC(s)
-
+s.shutdown(socket.SHUT_RDWR)
+s.close()
