@@ -14,7 +14,9 @@ from collections import Counter
 #   (time, response)
 
 ###Function and headers
-def generate_key(modulus_length,exponent, file_name):
+
+    
+def generate_keys(modulus_length,exponent):
     ###
     #   Make this function check if a key with file_name already exists
     #   If key does not, generate a public/private pair
@@ -23,10 +25,19 @@ def generate_key(modulus_length,exponent, file_name):
     ###
     key = RSA.generate(modulus_length,e=exponent)
     pub_key = key.publickey()
-    private_key = key.exportKey()
-    public_key = pub_key.exportKey()
+    #The private key in PEM format
+    private_key = key.exportKey("PEM")
+    #The public key in PEM Format
+    public_key = key.publickey().exportKey("PEM")
     
-    return private_key, public_key
+    fd = open("private_key.pem", "wb")
+    fd.write(private_key)
+    fd.close()
+    
+    fd = open("public_key.pem", "wb")
+    fd.write(public_key)
+    fd.close()
+    return private_key, public_key    
 
 def vote_counter(voting_file):
 #counting votes it uses a .txt file that contains votes
@@ -36,16 +47,20 @@ def vote_counter(voting_file):
         choice_ = choice.rstrip()
         print(choice_, ': ', vote_count[choice]) #prints voting choices and the number of votes they received 
 
-def RSA_encrypt(plaintext, pub_key):
+def RSA_encrypt(plaintext, pub_key_file):
     # Use RSA key to encrypt the plaintext
     # Return the encrypted result
-    ciphertext = plaintext
+    key = RSA.importKey(open('public_key_file').read()) 
+    cipher = PKCS1_OAEP.new(key)
+    ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
-def RSA_decrypt(ciphertext, pri_key):
+def RSA_decrypt(ciphertext, private_key_file):
     # Use RSA key to decrypt cipher
     # Return result
-    plaintext = ciphertext
+    key = RSA.importKey(open('private_key_file').read())
+    cipher = PKCS1_OAEP.new(key)
+    plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
 def accept_user_login():
