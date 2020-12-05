@@ -32,13 +32,7 @@ def generate_keys(modulus_length,exponent):
     #The public key in PEM Format
     public_key = key.publickey().exportKey("PEM")
     
-    fd = open("private_key.pem", "wb")
-    fd.write(private_key)
-    fd.close()
     
-    fd = open("public_key.pem", "wb")
-    fd.write(public_key)
-    fd.close()
     return private_key, public_key    
 
 def vote_counter(ballot_database, conf_priv_key): #(Nirav)
