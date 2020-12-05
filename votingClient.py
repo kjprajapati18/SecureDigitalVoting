@@ -25,18 +25,18 @@ def get_RSA_keys(file_name):
     
     return private_key, public_key
 
-def RSA_encrypt(plaintext, pub_key_file):
+def RSA_encrypt(plaintext, public_key):
     # Use RSA key to encrypt the plaintext
     # Return the encrypted result
-    key = RSA.importKey(open('public_key_file').read()) 
+    key = RSA.importKey(public_key) 
     cipher = PKCS1_OAEP.new(key)
     ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
-def RSA_decrypt(ciphertext, private_key_file):
+def RSA_decrypt(ciphertext, private_key):
     # Use RSA key to decrypt cipher
     # Return result
-    key = RSA.importKey(open('private_key_file').read())
+    key = RSA.importKey(private_key)
     cipher = PKCS1_OAEP.new(key)
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
