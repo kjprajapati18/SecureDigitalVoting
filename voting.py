@@ -2,6 +2,8 @@
 import socket
 from Crypto.PublicKey import RSA
 from collections import Counter
+from Crypto.Cipher import PKCS1_OAEP
+
 
 ### Notes that are different from Design Document
 #We can hash SSN because we encrypt the whole thing afterwards
