@@ -98,14 +98,14 @@ def send_message(conn, auth_pub_key, response):
 
 Users_database={}
 Ballot_database={}
-def creat_users(message): #message=get_message()
+def create_users(message): #message=get_message()
     #Before using this function, you have to get message from client
     Username,Password=message[0],message[1]
     Users_database[Username]=Password
     return
 
 
-def creat_ballot(vote):
+def create_ballot(vote):
     #Get vote first
     #Confirm the user
     Ballot_database[Username]=Vote
