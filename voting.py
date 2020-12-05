@@ -63,18 +63,20 @@ def RSA_decrypt(ciphertext, private_key_file):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
-def accept_user_login():
+def accept_user_login(conn):
     #Receive the User's enail/pass\
     #Verify user in database (add later, for now just accept)
     #Let the user know that they have succesfully logged in (Ballot sent in different function)
     return
 
-def get_vote():
+def get_vote(conn):
     #send ballot information to user that has logged in
     #Get user's response to vote
     #Store this in database, mark user as voted
     #Send client message that vote was successful
-    return
+    username = None
+    vote = None
+    return username, vote
 
 def get_message(conn, auth_pri_key):
     # Get message from client
@@ -109,6 +111,16 @@ def creat_ballot(vote):
     Ballot_database[Username]=Vote
     return
 
+def store_all_ballots(Ballot_database):
+    #Encrypt the database
+    #Write the whole database to a file
+    return
+
+def read_all_ballots(filename):
+    #(This function might not be needed/could be combined with vote counter)
+    #(THis function and/or the vote_counter() should be placed in a separate script)
+    #Take the database file and decrypt it. Then decrypt each user's vote
+    #Keep a tally of each vote as we decrypt them
 
 ### Main Server
 #Socket set-up and server client communication
