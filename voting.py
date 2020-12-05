@@ -41,7 +41,14 @@ def generate_keys(modulus_length,exponent):
     fd.close()
     return private_key, public_key    
 
-def vote_counter(voting_file):
+def vote_counter(ballot_database, conf_priv_key): #(Nirav)
+    # Go through the database and decrypt the votes
+    # Use the confidential private key to decrypt the votes
+    # Tally each vote as you decrypt them
+    # Display what each candidate got (# of votes)
+    # Dislpay the winner
+
+#You can probably use Osama's code below as reference 
 #counting votes it uses a .txt file that contains votes
     file = open(voting_file).readlines()
     vote_count = dict(Counter(file))
@@ -65,13 +72,13 @@ def RSA_decrypt(ciphertext, private_key_file):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
-def accept_user_login(conn):
+def accept_user_login(conn): #Erik
     #Receive the User's enail/pass\
     #Verify user in database (add later, for now just accept)
     #Let the user know that they have succesfully logged in (Ballot sent in different function)
     return
 
-def get_vote(conn):
+def get_vote(conn): #Krishna
     #send ballot information to user that has logged in
     #Get user's response to vote
     #Store this in database, mark user as voted
@@ -80,7 +87,7 @@ def get_vote(conn):
     vote = None
     return username, vote
 
-def get_message(conn, auth_pri_key):
+def get_message(conn, auth_pri_key): #Krishna
     # Get message from client
     # Decrypt message
     # Check time stamp
@@ -91,7 +98,7 @@ def get_message(conn, auth_pri_key):
     action = None
     return user, password, action
 
-def send_message(conn, auth_pub_key, response):
+def send_message(conn, auth_pub_key, response): #Krishna
     # Get current time
     # Create (time, response)
     # Encrypt and send to client
@@ -113,16 +120,6 @@ def create_ballot(vote):
     Ballot_database[Username]=Vote
     return
 
-def store_all_ballots(Ballot_database):
-    #Encrypt the database
-    #Write the whole database to a file
-    return
-
-def read_all_ballots(filename):
-    #(This function might not be needed/could be combined with vote counter)
-    #(THis function and/or the vote_counter() should be placed in a separate script)
-    #Take the database file and decrypt it. Then decrypt each user's vote
-    #Keep a tally of each vote as we decrypt them
 
 ### Main Server
 #Socket set-up and server client communication
