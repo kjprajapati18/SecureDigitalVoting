@@ -1,6 +1,8 @@
 ###imports
 import socket
-
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+from datetime import datetime
 
 ### Client should always send the messages in this format
 #   (time, email, password, action...)
@@ -62,13 +64,25 @@ def get_message(s, auth_pub_key):
     # Decrypt message
     # Check time stamp
     #   If too late, give error message and end program (for now/for demo purposes)
-    response = None
+    encrypted = s.recv(1024)
+    message = RSA_decrypt(encrypted, auth_pub_key)
+    split = repr(message).split(',')
+
+    time = split[0]
+    print(time)
+    #Check time
+    response = split[1]
     return response
 
 def send_message(s, auth_pub_key, username, password, response):
     # Get current time
     # Create (time, user, password, response)
     # Encrypt and send to client
+    now = datetime.now()
+    time = now.strftime("%m/%d/%Y %H:%M:%S")
+    message = bytes('{}, {}, {}, {}'.format(time, username, password, response), 'utf-8')
+    encrypted = RSA_encrypt(message, auth_pub_key)
+    s.sendall(encrypted)
     return
 
 

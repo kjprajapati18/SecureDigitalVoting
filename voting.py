@@ -3,7 +3,7 @@ import socket
 from Crypto.PublicKey import RSA
 from collections import Counter
 from Crypto.Cipher import PKCS1_OAEP
-
+from datetime import datetime
 
 ### Notes that are different from Design Document
 #We can hash SSN because we encrypt the whole thing afterwards
@@ -87,15 +87,26 @@ def get_message(conn, auth_pri_key): #Krishna
     # Check time stamp
     #   If too late, give error message and end program (for now/for demo purposes)
     # Tokenize (user, pass, action)
-    user = None
-    password = None
-    action = None
+    encrypted = conn.recv(1024)
+    message = RSA_decrypt(encrypted, auth_pri_key)
+    split = repr(message).split(',')
+
+    time = split[0]
+    # Check time here, implemented later
+    user = split[1]
+    password = split[2]
+    action = split[3]
     return user, password, action
 
-def send_message(conn, auth_pub_key, response): #Krishna
+def send_message(conn, auth_pri_key, response): #Krishna
     # Get current time
     # Create (time, response)
     # Encrypt and send to client
+    now = datetime.now()
+    time = now.strftime("%m/%d/%Y %H:%M:%S")
+    message = bytes(time + ', ' + response, 'utf-8')
+    encrypted = RSA_encrypt(message, auth_pri_key)
+    conn.sendall(encrypted)
     return
 
 
