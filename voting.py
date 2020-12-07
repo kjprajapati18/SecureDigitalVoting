@@ -44,7 +44,7 @@ def generate_keys(modulus_length,exponent):
     
     return private_key, public_key    
 
-def vote_counter(ballot_database, conf_priv_key): #(Nirav)
+def vote_counter(ballot_database): #(Nirav)
     # Go through the database and decrypt the votes
     # Use the confidential private key to decrypt the votes
     # Tally each vote as you decrypt them
