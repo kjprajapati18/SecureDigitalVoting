@@ -51,13 +51,19 @@ def vote_counter(ballot_database, conf_priv_key): #(Nirav)
     # Display what each candidate got (# of votes)
     # Dislpay the winner
 
-#You can probably use Osama's code below as reference 
-#counting votes it uses a .txt file that contains votes
-    file = open(voting_file).readlines()
-    vote_count = dict(Counter(file))
-    for choice in vote_count:
-        choice_ = choice.rstrip()
-        print(choice_, ': ', vote_count[choice]) #prints voting choices and the number of votes they received 
+    freq = {} 
+    for key in ballot_database: 
+        if (ballot_database[key] in freq): 
+            freq[key] += 1
+        else: 
+            freq[key] = 1
+  
+    for key, value in freq.items(): 
+        print ("Option % d : % d votes"%(key, value)) 
+
+    winner = max(freq, key=freq.get)
+    print('Winner is: Option ' + winner)
+
 
 def RSA_encrypt(plaintext, public_key):
     # Use RSA key to encrypt the plaintext
