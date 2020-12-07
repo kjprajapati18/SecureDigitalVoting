@@ -44,26 +44,20 @@ def generate_keys(modulus_length,exponent):
     
     return private_key, public_key    
 
-def vote_counter(ballot_database): #(Nirav)
+def vote_counter(ballot_database, conf_priv_key): #(Nirav)
     # Go through the database and decrypt the votes
     # Use the confidential private key to decrypt the votes
     # Tally each vote as you decrypt them
     # Display what each candidate got (# of votes)
     # Dislpay the winner
 
-    freq = {} 
-    for key in ballot_database: 
-        if (ballot_database[key] in freq): 
-            freq[key] += 1
-        else: 
-            freq[key] = 1
-  
-    for key, value in freq.items(): 
-        print ("Option % d : % d votes"%(key, value)) 
-
-    winner = max(freq, key=freq.get)
-    print('Winner is: Option ' + winner)
-
+#You can probably use Osama's code below as reference 
+#counting votes it uses a .txt file that contains votes
+    file = open(voting_file).readlines()
+    vote_count = dict(Counter(file))
+    for choice in vote_count:
+        choice_ = choice.rstrip()
+        print(choice_, ': ', vote_count[choice]) #prints voting choices and the number of votes they received 
 
 def RSA_encrypt(plaintext, public_key):
     # Use RSA key to encrypt the plaintext
@@ -142,19 +136,29 @@ def send_message(conn, auth_pri_key, response): #Krishna
 
 Users_database={}
 Ballot_database={}
-def create_users(message): #message=get_message()
+def create_users(message): #Jack
+    #message=get_message()
     #Before using this function, you have to get message from client
     Username,Password=message[0],message[1]
     Users_database[Username]=Password
     return
 
 
-def create_ballot(vote): #vote=get_vote
+def create_ballot(vote): #Jack
+    #vote=get_vote
     #Get vote first
     #Confirm the user
     Username, Vote=vote[0],vote[1]
     Ballot_database[Username]=Vote
     return
+def save_ballots(Ballot_database): #Jack
+    for item in Ballot_database.items():
+        for i in range(len(item)):
+            str1=RSA_encrypt(item[i],auth_pri_key)
+            with open(r'Ballot_database.txt', 'a') as f:
+                f.write(str1)
+                f.write('\r\t')
+     return
 
 
 ### Main Server
