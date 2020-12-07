@@ -53,7 +53,7 @@ def vote_counter(ballot_database): #(Nirav)
     first_candidate_total = 0
     second_candidate_total = 0
     total_votes = 0
-    for choice in ballot_database:
+    for choice in ballot_database.items():
         if choice_vote == ENTER CANDIDATE NAME
             first_candidate_total++
         elif choice_vote == ENTER SECOND CANDIDATE NAME
