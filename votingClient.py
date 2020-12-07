@@ -43,15 +43,28 @@ def RSA_decrypt(ciphertext, private_key):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
-def login(s):
+def login(s, auth_pub_key, cli_pri_key):
+     
+    username= None
+    password = None
+    error = "Error - Login not correct!"
+
     # Prompt for username and password
     # Send server
     # Read repsonse and notify user if successful
     # (Ballot/voting taken care of in next functino)
-    username = None
-    password = None
+    username = input("Enter username:")
+    password = input("Enter password:")
 
-    return username, password #on success
+    send_message(s, auth_pub_key, username, password, "login")
+    message = get_message(s, cli_pri_key)
+
+    if message is "Successfully logged in!": 
+        print("Successfully logged in!")
+        return username, password
+    
+    return error
+
 
 def vote(s, private_key, auth_pub_key, confidential_key, username, password):
     # read ballot information and display to user
