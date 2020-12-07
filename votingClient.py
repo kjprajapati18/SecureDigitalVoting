@@ -27,10 +27,11 @@ def get_RSA_keys(file_name):
     
     return private_key, public_key
 
+
 def RSA_encrypt(plaintext, public_key):
     # Use RSA key to encrypt the plaintext
     # Return the encrypted result
-    key = RSA.importKey(public_key) 
+    key = public_key
     cipher = PKCS1_OAEP.new(key)
     ciphertext = cipher.encrypt(plaintext)
     return ciphertext
@@ -38,7 +39,7 @@ def RSA_encrypt(plaintext, public_key):
 def RSA_decrypt(ciphertext, private_key):
     # Use RSA key to decrypt cipher
     # Return result
-    key = RSA.importKey(private_key)
+    key = private_key
     cipher = PKCS1_OAEP.new(key)
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
@@ -59,11 +60,11 @@ def login(s, auth_pub_key, cli_pri_key):
     send_message(s, auth_pub_key, username, password, "login")
     message = get_message(s, cli_pri_key)
 
-    if message is "Successfully logged in!": 
+    if message == "Successfully logged in!": 
         print("Successfully logged in!")
         return username, password
     
-    return error
+    return error, error
 
 
 def vote(s, private_key, auth_pub_key, confidential_key, username, password):
@@ -123,11 +124,14 @@ cli_pri_key = RSA.importKey(open('cli_private_key.pem').read())
 #Socket set-up and server client communication
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 65432        # The port used by the server
+PORT = 65433        # The port used by the server
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) ###Pass in "s" to any function that needs to talk with server
 s.connect((HOST, PORT))
-testWriteC(s)
-testReadC(s)
+
+username, password = login(s, auth_pub_key, cli_pri_key)
+vote(s, cli_pri_key, auth_pub_key, conf_pub_key, username, password)
+
+print("Shutting down!")
 s.shutdown(socket.SHUT_RDWR)
 s.close()

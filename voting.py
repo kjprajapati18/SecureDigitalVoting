@@ -44,7 +44,7 @@ def generate_keys(modulus_length,exponent):
     
     return private_key, public_key    
 
-def vote_counter(ballot_database, conf_priv_key): #(Nirav)
+def vote_counter(ballot_database): #(Nirav)
     # Go through the database and decrypt the votes
     # Use the confidential private key to decrypt the votes
     # Tally each vote as you decrypt them
@@ -59,16 +59,17 @@ def vote_counter(ballot_database, conf_priv_key): #(Nirav)
             freq[key] = 1
   
     for key, value in freq.items(): 
-        print ("Option % d : % d votes"%(key, value)) 
+        print ("Option % s : % d votes"%(key, value)) 
 
     winner = max(freq, key=freq.get)
     print('Winner is: Option ' + winner)
 
 
+
 def RSA_encrypt(plaintext, public_key):
     # Use RSA key to encrypt the plaintext
     # Return the encrypted result
-    key = RSA.importKey(public_key) 
+    key = public_key
     cipher = PKCS1_OAEP.new(key)
     ciphertext = cipher.encrypt(plaintext)
     return ciphertext
@@ -76,7 +77,7 @@ def RSA_encrypt(plaintext, public_key):
 def RSA_decrypt(ciphertext, private_key):
     # Use RSA key to decrypt cipher
     # Return result
-    key = RSA.importKey(private_key)
+    key = private_key
     cipher = PKCS1_OAEP.new(key)
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
@@ -84,10 +85,12 @@ def RSA_decrypt(ciphertext, private_key):
 def accept_user_login(conn, cli_public_key, auth_pri_key): #Erik
     #Receive the User's enail/pass\
     #Checks if user information is in the database
-    username, password = get_message(conn, auth_pri_key)
+    username, password, action = get_message(conn, auth_pri_key)
     #Verify user in database (add later, for now just accept)
     #Here we will verify using the username and password initialized above
     #Let the user know that they have succesfully logged in (Ballot sent in different function)
+    print(username)
+    print(password)
     send_message(conn, cli_public_key, "Successfully logged in!")
     #If(Verified), return True; else return false  --- Implement once we can verify from the database
     return
@@ -157,6 +160,8 @@ def create_ballot(vote): #Jack
     Username, Vote=vote[0],vote[1]
     Ballot_database[Username]=Vote
     return
+
+
 def save_ballots(Ballot_database): #Jack
     for item in Ballot_database.items():
         for i in range(len(item)):
@@ -164,7 +169,7 @@ def save_ballots(Ballot_database): #Jack
             with open(r'Ballot_database.txt', 'a') as f:
                 f.write(str1)
                 f.write('\r\t')
-     return
+    return
 
 
 ### Main Server
@@ -176,7 +181,7 @@ conf_private_key = RSA.importKey(open('conf_private_key.pem').read())
 cli_public_key = RSA.importKey(open('cli_public_key.pem').read())
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+PORT = 65433        # Port to listen on (non-privileged ports are > 1023)
 
 s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
@@ -185,8 +190,9 @@ s.listen()
 conn, addr = s.accept()
 
 print('Connected by', addr)
-while True:
-    data = conn.recv(1024)
-    if not data:
-        break
-    conn.sendall(data)
+
+accept_user_login(conn, cli_public_key, auth_private_key)
+ballot = get_vote(conn, cli_public_key, auth_private_key)
+create_ballot(ballot)
+vote_counter(Ballot_database)
+print("Done!")
