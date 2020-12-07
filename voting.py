@@ -50,14 +50,23 @@ def vote_counter(ballot_database, conf_priv_key): #(Nirav)
     # Tally each vote as you decrypt them
     # Display what each candidate got (# of votes)
     # Dislpay the winner
+    first_candidate_total = 0
+    second_candidate_total = 0
+    total_votes = 0
+    for choice in ballot_database:
+        if choice_vote == ENTER CANDIDATE NAME
+            first_candidate_total++
+        elif choice_vote == ENTER SECOND CANDIDATE NAME
+            second_candidate_total++
+        total_votes++
+    print(total_votes)
+    print(first_candidate_total)
+    print(second_candidate_total)
+    if first_candidate_total > second_candidate_total
+        print('Winner is: ' + ENTER CANDIDATE NAME + ' , 
+    elif first_candidate_total < second_candidate_total
+        print('Winner is: ' + ENTER SECOND CANDIDATE NAME
 
-#You can probably use Osama's code below as reference 
-#counting votes it uses a .txt file that contains votes
-    file = open(voting_file).readlines()
-    vote_count = dict(Counter(file))
-    for choice in vote_count:
-        choice_ = choice.rstrip()
-        print(choice_, ': ', vote_count[choice]) #prints voting choices and the number of votes they received 
 
 def RSA_encrypt(plaintext, public_key):
     # Use RSA key to encrypt the plaintext
