@@ -75,10 +75,15 @@ def RSA_decrypt(ciphertext, private_key):
     plaintext = cipher.decrypt(ciphertext)
     return plaintext
 
-def accept_user_login(conn): #Erik
+def accept_user_login(conn, cli_public_key, auth_pri_key): #Erik
     #Receive the User's enail/pass\
+    #Checks if user information is in the database
+    username, password = get_message(conn, auth_pri_key)
     #Verify user in database (add later, for now just accept)
+    #Here we will verify using the username and password initialized above
     #Let the user know that they have succesfully logged in (Ballot sent in different function)
+    send_message(conn, cli_public_key, "Successfully logged in!")
+    #If(Verified), return True; else return false  --- Implement once we can verify from the database
     return
 
 def get_vote(conn, cli_public_key, auth_pri_key): #Krishna
