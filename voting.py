@@ -59,10 +59,10 @@ def vote_counter(ballot_database): #(Nirav)
             freq[key] = 1
   
     for key, value in freq.items(): 
-        print ("Option % s : % d votes"%(key, value)) 
+        print ("Option % s : % d votes"%(ballot_database[key], value)) 
 
     winner = max(freq, key=freq.get)
-    print('Winner is: Option ' + winner)
+    print('Winner is: Option ' + ballot_database[winner])
 
 
 
@@ -162,10 +162,10 @@ def create_ballot(vote): #Jack
     return
 
 
-def save_ballots(Ballot_database): #Jack
+def save_ballots(Ballot_database, conf_public_key): #Jack
     for item in Ballot_database.items():
         for i in range(len(item)):
-            str1=RSA_encrypt(item[i],auth_pri_key)
+            str1=RSA_encrypt(item[i], conf_public_key)
             with open(r'Ballot_database.txt', 'a') as f:
                 f.write(str1)
                 f.write('\r\t')
@@ -195,4 +195,5 @@ accept_user_login(conn, cli_public_key, auth_private_key)
 ballot = get_vote(conn, cli_public_key, auth_private_key)
 create_ballot(ballot)
 vote_counter(Ballot_database)
+save_ballots(Ballot_database, conf_public_key)
 print("Done!")
