@@ -27,7 +27,7 @@ from datetime import datetime
 ###Function and headers
 
     
-def generate_keys(modulus_length,exponent):
+def generate_keys(modulus_length,exponent): #Osama
     ###
     #   Make this function check if a key with file_name already exists
     #   If key does not, generate a public/private pair
@@ -66,7 +66,7 @@ def vote_counter(ballot_database): #(Nirav)
 
 
 
-def RSA_encrypt(plaintext, public_key):
+def RSA_encrypt(plaintext, public_key): #Osama
     # Use RSA key to encrypt the plaintext
     # Return the encrypted result
     key = public_key
@@ -74,7 +74,7 @@ def RSA_encrypt(plaintext, public_key):
     ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
-def RSA_decrypt(ciphertext, private_key):
+def RSA_decrypt(ciphertext, private_key): #Osama
     # Use RSA key to decrypt cipher
     # Return result
     key = private_key
