@@ -147,12 +147,18 @@ def create_ballot(vote):
 
 ### Main Server
 #Socket set-up and server client communication
+auth_public_key = RSA.importKey(open('auth_public_key.pem').read())
+auth_private_key = RSA.importKey(open('auth_private_key.pem').read())
+conf_public_key = RSA.importKey(open('conf_public_key.pem').read())
+conf_private_key = RSA.importKey(open('conf_private_key.pem').read())
+cli_public_key = RSA.importKey(open('cli_public_key.pem').read())
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
 
 s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
+print("Server Ready!")
 s.listen()
 conn, addr = s.accept()
 

@@ -103,6 +103,10 @@ def send_message(s, auth_pub_key, username, password, response):
 
 
 ### Main Client
+auth_pub_key = RSA.importKey(open('auth_public_key.pem').read())
+conf_pub_key = RSA.importKey(open('conf_public_key.pem').read())
+cli_pub_key = RSA.importKey(open('cli_public_key.pem').read())
+cli_pri_key = RSA.importKey(open('cli_private_key.pem').read())
 #Socket set-up and server client communication
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
