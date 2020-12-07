@@ -169,7 +169,7 @@ def save_ballots(Ballot_database): #Jack
             with open(r'Ballot_database.txt', 'a') as f:
                 f.write(str1)
                 f.write('\r\t')
-    return
+    return None
 
 
 ### Main Server
