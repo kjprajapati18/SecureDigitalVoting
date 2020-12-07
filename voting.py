@@ -50,22 +50,19 @@ def vote_counter(ballot_database, conf_priv_key): #(Nirav)
     # Tally each vote as you decrypt them
     # Display what each candidate got (# of votes)
     # Dislpay the winner
-    first_candidate_total = 0
-    second_candidate_total = 0
-    total_votes = 0
-    for choice in ballot_database:
-        if choice_vote == ENTER CANDIDATE NAME
-            first_candidate_total++
-        elif choice_vote == ENTER SECOND CANDIDATE NAME
-            second_candidate_total++
-        total_votes++
-    print(total_votes)
-    print(first_candidate_total)
-    print(second_candidate_total)
-    if first_candidate_total > second_candidate_total
-        print('Winner is: ' + ENTER CANDIDATE NAME + ' , 
-    elif first_candidate_total < second_candidate_total
-        print('Winner is: ' + ENTER SECOND CANDIDATE NAME
+
+    freq = {} 
+    for key in ballot_database: 
+        if (ballot_database[key] in freq): 
+            freq[key] += 1
+        else: 
+            freq[key] = 1
+  
+    for key, value in freq.items(): 
+        print ("Option % d : % d votes"%(key, value)) 
+
+    winner = max(freq, key=freq.get)
+    print('Winner is: Option ' + winner)
 
 
 def RSA_encrypt(plaintext, public_key):
