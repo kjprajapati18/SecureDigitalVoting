@@ -5,9 +5,18 @@ from collections import Counter
 from Crypto.Cipher import PKCS1_OAEP
 from datetime import datetime
 
-### Notes that are different from Design Document
-#We can hash SSN because we encrypt the whole thing afterwards
-#We can send password directly we encrypt
+###Things to mention in the Demo
+# Client should not have an RSA key pair. That the server sends is confidential
+#       We only have a pair because pyCrypto does not let you use public key decryption
+# We should be encrypting the vote using the confidential key
+#       We do not do that because then the plaintext becomes too long to encrypt
+#       We should split the message into blocks and encrypt each block
+# We have not implemented account creation or data storage
+#       This is a relatively simple, but time-consuming, fix since we already have our RSA encryption down
+#       In reality, we store all the users to file following the encryption scheme outlined in design document
+# RSA keys are made with small exponents (e=3) for faster compute time.
+#       The premise of the program stands but the security of it is traded for performance
+#       This is only for the purpose of demonstration
 
 ### Client should always send the messages in this format
 #   (time, email, password, action...)
@@ -72,13 +81,21 @@ def accept_user_login(conn): #Erik
     #Let the user know that they have succesfully logged in (Ballot sent in different function)
     return
 
-def get_vote(conn): #Krishna
+def get_vote(conn, cli_public_key, auth_pri_key): #Krishna
     #send ballot information to user that has logged in
     #Get user's response to vote
     #Store this in database, mark user as voted
     #Send client message that vote was successful
-    username = None
-    vote = None
+    ballot = """Who are you voting for:
+        1. Option 1 
+        2. Option 2 
+        3. Option 3 
+        4. Option 4 """
+    send_message(conn, cli_public_key, ballot)
+    username, password, vote = get_message(conn, auth_pri_key)
+    #Check if User is in database to confirm
+    #Mark they have voted
+    send_message(conn, cli_public_key, "Successful Vote!")
     return username, vote
 
 def get_message(conn, auth_pri_key): #Krishna
@@ -89,13 +106,15 @@ def get_message(conn, auth_pri_key): #Krishna
     # Tokenize (user, pass, action)
     encrypted = conn.recv(1024)
     message = RSA_decrypt(encrypted, auth_pri_key)
-    split = repr(message).split(',')
+    split = repr(message).split(', ')
 
     time = split[0]
     # Check time here, implemented later
     user = split[1]
     password = split[2]
     action = split[3]
+    #RSA keeps adding ' to end of string
+    action = action[0:-1]
     return user, password, action
 
 def send_message(conn, auth_pri_key, response): #Krishna
@@ -104,7 +123,7 @@ def send_message(conn, auth_pri_key, response): #Krishna
     # Encrypt and send to client
     now = datetime.now()
     time = now.strftime("%m/%d/%Y %H:%M:%S")
-    message = bytes(time + ', ' + response, 'utf-8')
+    message = bytes('{}, {}'.format(time, response), 'utf-8')
     encrypted = RSA_encrypt(message, auth_pri_key)
     conn.sendall(encrypted)
     return

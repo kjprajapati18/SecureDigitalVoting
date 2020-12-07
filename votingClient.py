@@ -53,10 +53,24 @@ def login(s):
 
     return username, password #on success
 
-def vote(s, username, password):
+def vote(s, private_key, auth_pub_key, confidential_key, username, password):
     # read ballot information and display to user
     # Get user's vote
     # Encrypt in proper manner and send to server
+    ballot = get_message(s, private_key)
+    print(ballot)
+    vote = input("Please enter the number of the option you want...")
+    
+    ### Encrypted vote is too long to be sent
+    ### In real world, we would split the message into chunks and send each chunk
+    ### Had difficulty implementing this for this demo
+    #vote = bytes(vote, 'utf-8')
+    #encryptedVote = repr(RSA_encrypt(vote, confidential_key))
+    encryptedVote = vote
+    
+    send_message(s, auth_pub_key, username, password, encryptedVote)
+    confirmation = get_message(s, private_key)
+    print(confirmation)
     return
 
 def get_message(s, auth_pub_key):
@@ -66,12 +80,14 @@ def get_message(s, auth_pub_key):
     #   If too late, give error message and end program (for now/for demo purposes)
     encrypted = s.recv(1024)
     message = RSA_decrypt(encrypted, auth_pub_key)
-    split = repr(message).split(',')
+    split = repr(message).split(', ')
 
     time = split[0]
-    print(time)
+    #print(time)
     #Check time
     response = split[1]
+     #RSA keeps adding ' to end of string
+    response = response[0:-1]
     return response
 
 def send_message(s, auth_pub_key, username, password, response):
