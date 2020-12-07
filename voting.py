@@ -138,9 +138,10 @@ def create_users(message): #message=get_message()
     return
 
 
-def create_ballot(vote):
+def create_ballot(vote): #vote=get_vote
     #Get vote first
     #Confirm the user
+    Username, Vote=vote[0],vote[1]
     Ballot_database[Username]=Vote
     return
 
