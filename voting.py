@@ -89,8 +89,8 @@ def accept_user_login(conn, cli_public_key, auth_pri_key): #Erik
     #Verify user in database (add later, for now just accept)
     #Here we will verify using the username and password initialized above
     #Let the user know that they have succesfully logged in (Ballot sent in different function)
-    print(username)
-    print(password)
+    #print(username)
+    #print(password)
     send_message(conn, cli_public_key, "Successfully logged in!")
     #If(Verified), return True; else return false  --- Implement once we can verify from the database
     return
@@ -165,7 +165,7 @@ def create_ballot(vote): #Jack
 def save_ballots(Ballot_database, conf_public_key): #Jack
     for item in Ballot_database.items():
         for i in range(len(item)):
-            str1=RSA_encrypt(item[i], conf_public_key)
+            str1=repr(RSA_encrypt(bytes(item[i], 'utf-8'), conf_public_key))
             with open(r'Ballot_database.txt', 'a') as f:
                 f.write(str1)
                 f.write('\r\t')
