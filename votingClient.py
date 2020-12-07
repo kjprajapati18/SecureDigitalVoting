@@ -61,7 +61,7 @@ def login(s, auth_pub_key, cli_pri_key):
     message = get_message(s, cli_pri_key)
 
     if message == "Successfully logged in!": 
-        print("Successfully logged in!")
+        print('\n' + message + '\n')
         return username, password
     
     return error, error
@@ -74,7 +74,11 @@ def vote(s, private_key, auth_pub_key, confidential_key, username, password):
     ballot = get_message(s, private_key)
     print(ballot)
     vote = input("Please enter the number of the option you want...")
-    
+    vote = getCandidate(ballot, vote)
+    if vote == None:
+        print("You did not enter a valid vote!")
+        send_message(s, auth_pub_key, username, password, "No Vote")
+        return
     ### Encrypted vote is too long to be sent
     ### In real world, we would split the message into chunks and send each chunk
     ### Had difficulty implementing this for this demo
@@ -84,7 +88,7 @@ def vote(s, private_key, auth_pub_key, confidential_key, username, password):
     
     send_message(s, auth_pub_key, username, password, encryptedVote)
     confirmation = get_message(s, private_key)
-    print(confirmation)
+    print('\n' + confirmation)
     return
 
 def get_message(s, auth_pub_key):
@@ -94,14 +98,12 @@ def get_message(s, auth_pub_key):
     #   If too late, give error message and end program (for now/for demo purposes)
     encrypted = s.recv(1024)
     message = RSA_decrypt(encrypted, auth_pub_key)
-    split = repr(message).split(', ')
+    split = message.decode('utf-8').split(', ')
 
     time = split[0]
     #print(time)
     #Check time
     response = split[1]
-     #RSA keeps adding ' to end of string
-    response = response[0:-1]
     return response
 
 def send_message(s, auth_pub_key, username, password, response):
@@ -115,6 +117,14 @@ def send_message(s, auth_pub_key, username, password, response):
     s.sendall(encrypted)
     return
 
+def getCandidate(ballot, vote):
+    delimited = ballot.split()
+    length = len(delimited)
+
+    eleNum = int(vote)*2+4
+    if eleNum >= length:
+        return None
+    return delimited[eleNum]
 
 ### Main Client
 auth_pub_key = RSA.importKey(open('auth_public_key.pem').read())
@@ -132,6 +142,6 @@ s.connect((HOST, PORT))
 username, password = login(s, auth_pub_key, cli_pri_key)
 vote(s, cli_pri_key, auth_pub_key, conf_pub_key, username, password)
 
-print("Shutting down!")
+print("\nShutting down!")
 s.shutdown(socket.SHUT_RDWR)
 s.close()

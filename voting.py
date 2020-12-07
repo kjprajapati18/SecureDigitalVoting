@@ -50,19 +50,19 @@ def vote_counter(ballot_database): #(Nirav)
     # Tally each vote as you decrypt them
     # Display what each candidate got (# of votes)
     # Dislpay the winner
-
+    print("\n\nStarting the Counting Process!\n")
     freq = {} 
-    for key in ballot_database: 
-        if (ballot_database[key] in freq): 
-            freq[key] += 1
+    for key, value in ballot_database.items(): 
+        if (value in freq): 
+            freq[value] += 1
         else: 
-            freq[key] = 1
+            freq[value] = 1
   
     for key, value in freq.items(): 
-        print ("Option % s : % d votes"%(ballot_database[key], value)) 
+        print ("% s : % d votes"%(key, value)) 
 
     winner = max(freq, key=freq.get)
-    print('Winner is: Option ' + ballot_database[winner])
+    print('\nWinner is: ' + winner)
 
 
 
@@ -101,12 +101,15 @@ def get_vote(conn, cli_public_key, auth_pri_key): #Krishna
     #Store this in database, mark user as voted
     #Send client message that vote was successful
     ballot = """Who are you voting for:
-        1. Option 1 
-        2. Option 2 
-        3. Option 3 
-        4. Option 4 """
+        1. Obama 
+        2. Trump 
+        3. Hillary 
+        4. Biden
+        5. Trappe"""
     send_message(conn, cli_public_key, ballot)
     username, password, vote = get_message(conn, auth_pri_key)
+    if(vote == "No Vote"):
+        return username, None
     #Check if User is in database to confirm
     #Mark they have voted
     send_message(conn, cli_public_key, "Successful Vote!")
@@ -119,16 +122,16 @@ def get_message(conn, auth_pri_key): #Krishna
     #   If too late, give error message and end program (for now/for demo purposes)
     # Tokenize (user, pass, action)
     encrypted = conn.recv(1024)
+    print('Receiving: ' + repr(encrypted) + '\n')
     message = RSA_decrypt(encrypted, auth_pri_key)
-    split = repr(message).split(', ')
-
+    split = message.decode('utf-8').split(', ')
+    
     time = split[0]
     # Check time here, implemented later
     user = split[1]
     password = split[2]
     action = split[3]
-    #RSA keeps adding ' to end of string
-    action = action[0:-1]
+    
     return user, password, action
 
 def send_message(conn, auth_pri_key, response): #Krishna
@@ -139,6 +142,7 @@ def send_message(conn, auth_pri_key, response): #Krishna
     time = now.strftime("%m/%d/%Y %H:%M:%S")
     message = bytes('{}, {}'.format(time, response), 'utf-8')
     encrypted = RSA_encrypt(message, auth_pri_key)
+    print('Sending: ' + repr(encrypted) + '\n')
     conn.sendall(encrypted)
     return
 
@@ -185,15 +189,22 @@ PORT = 65433        # Port to listen on (non-privileged ports are > 1023)
 
 s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
-print("Server Ready!")
+print("\nServer Ready!")
 s.listen()
-conn, addr = s.accept()
 
-print('Connected by', addr)
+i = 0
+while(i < 4):
+    conn, addr = s.accept()
 
-accept_user_login(conn, cli_public_key, auth_private_key)
-ballot = get_vote(conn, cli_public_key, auth_private_key)
-create_ballot(ballot)
+    print('\nConnected by', addr)
+
+    accept_user_login(conn, cli_public_key, auth_private_key)
+    ballot = get_vote(conn, cli_public_key, auth_private_key)
+    if ballot[1] != None:
+        create_ballot(ballot)
+        i += 1
+    print("Ended connection\n")
+
 vote_counter(Ballot_database)
 save_ballots(Ballot_database, conf_public_key)
-print("Done!")
+print("\nDone!")
